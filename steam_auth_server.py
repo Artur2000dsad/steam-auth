@@ -17,16 +17,18 @@ import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
 
+from steam_auth_success_page import render_auth_success_html
+
 # Порт для Steam callback сервера
 STEAM_AUTH_PORT = int(os.environ.get('STEAM_AUTH_PORT', '5000'))
 # Хост бинда (для сервера за nginx обычно 127.0.0.1, для прямого запуска можно 0.0.0.0)
-STEAM_AUTH_HOST = os.environ.get('STEAM_AUTH_HOST', '127.0.0.1')
+STEAM_AUTH_HOST = os.environ.get('STEAM_AUTH_HOST', '0.0.0.0')
 # Публичный домен сервера Steam-авторизации
 STEAM_AUTH_DOMAIN = os.environ.get('STEAM_AUTH_DOMAIN', 'launch-serversteamauth.ru').strip()
 # Явный публичный base URL (если задан, приоритетнее host/proto из заголовков)
 STEAM_AUTH_PUBLIC_URL = os.environ.get('STEAM_AUTH_PUBLIC_URL', 'https://launch-serversteamauth.ru').strip().rstrip('/')
 # URL основного сервера для отправки информации об авторизации
-MAIN_SERVER_URL = os.environ.get('MAIN_SERVER_URL', 'http://sk1.liquidnodes.online:25591')
+MAIN_SERVER_URL = os.environ.get('MAIN_SERVER_URL', 'http://rust.blue-hosting.ru:10006')
 
 # Steam Auth Session Storage (временное хранилище сессий)
 steam_auth_sessions = {}
@@ -147,126 +149,7 @@ class SteamAuthHandler(BaseHTTPRequestHandler):
 			if not avatar_url:
 				avatar_url = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/fe/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg"
 			
-			# Отправляем HTML ответ пользователю
-			html_response = f"""
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Steam Авторизация завершена</title>
-	<meta charset='utf-8'>
-	<meta name='viewport' content='width=device-width, initial-scale=1'>
-	<meta http-equiv='refresh' content='6;url=steam://'>
-	<style>
-		* {{ box-sizing: border-box; }}
-		body {{
-			font-family: 'Segoe UI', Arial, sans-serif;
-			background: linear-gradient(135deg, #0B1120 0%, #12263B 55%, #1F4D52 100%);
-			color: #E2F4F6;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			margin: 0;
-		}}
-		.container {{
-			text-align: center;
-			padding: 32px;
-			background: rgba(18, 38, 59, 0.92);
-			border-radius: 16px;
-			border: 1px solid #1F4D52;
-			box-shadow: 0 16px 36px rgba(0, 16, 24, 0.55);
-			min-width: 420px;
-			max-width: 560px;
-		}}
-		.user-info {{
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			gap: 18px;
-			margin-bottom: 18px;
-		}}
-		.avatar {{
-			width: 88px;
-			height: 88px;
-			border-radius: 50%;
-			border: 2px solid #22C55E;
-			object-fit: cover;
-		}}
-		.user-details {{
-			text-align: left;
-		}}
-		.steam-name {{
-			font-size: 24px;
-			font-weight: 700;
-			color: #4ADE80;
-			margin-bottom: 6px;
-		}}
-		.steam-id {{
-			font-size: 13px;
-			color: #9FB4BF;
-		}}
-		.success {{
-			margin-top: 10px;
-			font-size: 16px;
-			color: #86EFAC;
-			font-weight: 600;
-		}}
-		.countdown {{
-			font-size: 13px;
-			margin-top: 10px;
-			color: #B8CBD4;
-		}}
-		.actions {{
-			display: flex;
-			gap: 10px;
-			margin-top: 16px;
-			justify-content: center;
-		}}
-		.btn {{
-			border: 1px solid #1F4D52;
-			background: #17324A;
-			color: #E2F4F6;
-			padding: 10px 14px;
-			border-radius: 10px;
-			text-decoration: none;
-			font-size: 13px;
-		}}
-		.btn.primary {{
-			background: #22C55E;
-			color: #0B1120;
-			border-color: #22C55E;
-		}}
-	</style>
-</head>
-<body>
-	<div class='container'>
-		<div class="user-info">
-			<img src="{avatar_url}" alt="Avatar" class="avatar" onerror="this.src='https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/fe/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'">
-			<div class="user-details">
-				<div class="steam-name">{steam_name}</div>
-				<div class="steam-id">Steam ID: {steam_id if steam_id else 'N/A'}</div>
-			</div>
-		</div>
-		<div class="success">Авторизация успешна</div>
-		<div class="countdown">Можно закрыть вкладку или вернуться в лаунчер. Авто-переход в Steam через <span id="t">6</span> сек.</div>
-		<div class="actions">
-			<a class="btn primary" href="steam://">Открыть Steam</a>
-			<a class="btn" href="javascript:window.close()">Закрыть вкладку</a>
-		</div>
-	</div>
-	<script>
-		let left = 6;
-		const node = document.getElementById('t');
-		const timer = setInterval(() => {{
-			left -= 1;
-			if (left <= 0) {{
-				clearInterval(timer);
-			}}
-			if (node) node.textContent = String(Math.max(left, 0));
-		}}, 1000);
-	</script>
-</body>
-</html>"""
+			html_response = render_auth_success_html(steam_name, steam_id, avatar_url)
 			
 			try:
 				self.send_response(200)
@@ -483,4 +366,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-
