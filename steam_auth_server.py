@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 from steam_auth_success_page import render_auth_success_html
 
 # Порт для Steam callback сервера
-STEAM_AUTH_PORT = int(os.environ.get('STEAM_AUTH_PORT', '5000'))
+STEAM_AUTH_PORT = int(os.environ.get('STEAM_AUTH_PORT', '8080'))
 # Хост бинда (для сервера за nginx обычно 127.0.0.1, для прямого запуска можно 0.0.0.0)
 STEAM_AUTH_HOST = os.environ.get('STEAM_AUTH_HOST', '0.0.0.0')
 # Публичный домен сервера Steam-авторизации
@@ -110,30 +110,34 @@ class SteamAuthHandler(BaseHTTPRequestHandler):
 					}
 				print(f"[Steam Auth Server] Session saved locally: {session_id}")
 				
-				# Отправляем информацию на основной сервер
-				try:
-					callback_data = {
-						'session_id': session_id,
-						'status': 'success',
-						'callback_url': callback_url
-					}
-					callback_json = json.dumps(callback_data)
-					callback_bytes = callback_json.encode('utf-8')
-					
-					main_server_endpoint = f"{MAIN_SERVER_URL}/api/steam-auth/callback"
-					req = urllib.request.Request(
-						main_server_endpoint,
-						data=callback_bytes,
-						headers={'Content-Type': 'application/json'},
-						method='POST'
-					)
-					
-					with urllib.request.urlopen(req, timeout=2) as response:
-						result = response.read().decode('utf-8')
-						print(f"[Steam Auth Server] Sent callback to main server: {result}")
-				except Exception as e:
-					print(f"[Steam Auth Server] WARNING: Failed to send callback to main server: {e}")
-					# Продолжаем работу - локальное хранилище все равно есть
+				# Отправляем информацию на основной сервер (с повторами)
+				callback_data = {
+					'session_id': session_id,
+					'status': 'success',
+					'callback_url': callback_url
+				}
+				callback_json = json.dumps(callback_data).encode('utf-8')
+				main_server_endpoint = f"{MAIN_SERVER_URL.rstrip('/')}/api/steam-auth/callback"
+				sent = False
+				for attempt in range(1, 4):
+					try:
+						req = urllib.request.Request(
+							main_server_endpoint,
+							data=callback_json,
+							headers={'Content-Type': 'application/json'},
+							method='POST'
+						)
+						with urllib.request.urlopen(req, timeout=5) as response:
+							result = response.read().decode('utf-8')
+							print(f"[Steam Auth Server] Sent callback to main server (try {attempt}): {result}")
+							sent = True
+							break
+					except Exception as e:
+						print(f"[Steam Auth Server] WARNING: callback to main server try {attempt}/3 failed: {e}")
+						if attempt < 3:
+							time.sleep(0.4 * attempt)
+				if not sent:
+					print("[Steam Auth Server] Main server unreachable — лаунчер получит callback через /api/steam-auth/status на этом сервере")
 			else:
 				print(f"[Steam Auth Server] WARNING: No session ID in callback!")
 			
@@ -366,3 +370,4 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
