@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 from steam_auth_success_page import render_auth_success_html
 
 # Порт для Steam callback сервера
-STEAM_AUTH_PORT = int(os.environ.get('STEAM_AUTH_PORT', '8080'))
+STEAM_AUTH_PORT = int(os.environ.get('STEAM_AUTH_PORT', '5000'))
 # Хост бинда (для сервера за nginx обычно 127.0.0.1, для прямого запуска можно 0.0.0.0)
 STEAM_AUTH_HOST = os.environ.get('STEAM_AUTH_HOST', '0.0.0.0')
 # Публичный домен сервера Steam-авторизации
