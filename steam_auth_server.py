@@ -28,7 +28,7 @@ STEAM_AUTH_DOMAIN = os.environ.get('STEAM_AUTH_DOMAIN', 'launch-serversteamauth.
 # Явный публичный base URL (если задан, приоритетнее host/proto из заголовков)
 STEAM_AUTH_PUBLIC_URL = os.environ.get('STEAM_AUTH_PUBLIC_URL', 'https://launch-serversteamauth.ru').strip().rstrip('/')
 # URL основного сервера для отправки информации об авторизации
-MAIN_SERVER_URL = os.environ.get('MAIN_SERVER_URL', 'http://rust.blue-hosting.ru:10006')
+MAIN_SERVER_URL = os.environ.get('MAIN_SERVER_URL', 'http://51.38.150.34:10010')
 
 # Steam Auth Session Storage (временное хранилище сессий)
 steam_auth_sessions = {}
