@@ -47,6 +47,17 @@ def render_auth_success_html(steam_name: str, steam_id: str | None, avatar_url: 
 				linear-gradient(145deg, #050508 0%, #0a0608 40%, #120808 70%, #08080c 100%);
 			z-index: 0;
 		}}
+		.bg-grid {{
+			position: fixed;
+			inset: 0;
+			z-index: 0;
+			pointer-events: none;
+			background-image:
+				linear-gradient(rgba(255, 45, 45, 0.04) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 45, 45, 0.04) 1px, transparent 1px);
+			background-size: 48px 48px;
+			mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 20%, transparent 75%);
+		}}
 		.orb {{
 			position: fixed;
 			border-radius: 50%;
@@ -66,13 +77,14 @@ def render_auth_success_html(steam_name: str, steam_id: str | None, avatar_url: 
 			position: relative;
 			z-index: 1;
 			width: 100%;
-			max-width: 440px;
-			padding: 32px 28px 28px;
-			background: rgba(14, 14, 20, 0.94);
-			border: 1px solid #281818;
-			border-radius: 16px;
-			box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 45, 45, 0.06);
-			backdrop-filter: blur(12px);
+			max-width: 460px;
+			padding: 34px 30px 30px;
+			background: rgba(14, 14, 20, 0.88);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 18px;
+			box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+			backdrop-filter: blur(18px);
+			-webkit-backdrop-filter: blur(18px);
 			animation: cardIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 		}}
 		@keyframes cardIn {{
@@ -119,21 +131,21 @@ def render_auth_success_html(steam_name: str, steam_id: str | None, avatar_url: 
 			width: 64px;
 			height: 64px;
 			border-radius: 50%;
-			background: rgba(255, 45, 45, 0.12);
-			border: 2px solid rgba(255, 45, 45, 0.35);
+			background: rgba(76, 175, 80, 0.12);
+			border: 2px solid rgba(76, 175, 80, 0.4);
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			animation: pulse 2s ease-in-out infinite;
 		}}
 		@keyframes pulse {{
-			0%, 100% {{ box-shadow: 0 0 0 0 rgba(255, 45, 45, 0.25); }}
-			50% {{ box-shadow: 0 0 0 14px rgba(255, 45, 45, 0); }}
+			0%, 100% {{ box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.25); }}
+			50% {{ box-shadow: 0 0 0 14px rgba(76, 175, 80, 0); }}
 		}}
 		.check-icon {{
 			width: 32px;
 			height: 32px;
-			color: #FF2D2D;
+			color: #6fcf97;
 		}}
 		.headline {{
 			text-align: center;
@@ -261,6 +273,7 @@ def render_auth_success_html(steam_name: str, steam_id: str | None, avatar_url: 
 </head>
 <body>
 	<div class="bg" aria-hidden="true"></div>
+	<div class="bg-grid" aria-hidden="true"></div>
 	<div class="orb orb-1" aria-hidden="true"></div>
 	<div class="orb orb-2" aria-hidden="true"></div>
 
