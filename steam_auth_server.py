@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Steam OpenID Callback Server
-Сервер для получения callback от Steam при авторизации через OpenID
+Сервер для получения callback от Steam при авторизации через OpenID.
+Работает на поддомене auth (например auth.sabrrust.online).
 """
 
 import os
@@ -14,21 +15,32 @@ import threading
 import time
 import re
 import urllib.request
-import urllib.parse
 import xml.etree.ElementTree as ET
 
 from steam_auth_success_page import render_auth_success_html
+
+try:
+    from config_loader import apply_steam_auth_env, load_config
+
+    _cfg = load_config()
+    apply_steam_auth_env(_cfg)
+except Exception:
+    pass
 
 # Порт для Steam callback сервера
 STEAM_AUTH_PORT = int(os.environ.get('STEAM_AUTH_PORT', '5000'))
 # Хост бинда (для сервера за nginx обычно 127.0.0.1, для прямого запуска можно 0.0.0.0)
 STEAM_AUTH_HOST = os.environ.get('STEAM_AUTH_HOST', '0.0.0.0')
-# Публичный домен сервера Steam-авторизации
-STEAM_AUTH_DOMAIN = os.environ.get('STEAM_AUTH_DOMAIN', 'launch-serversteamauth.ru').strip()
+# Публичный домен сервера Steam-авторизации (поддомен auth)
+STEAM_AUTH_DOMAIN = os.environ.get('STEAM_AUTH_DOMAIN', 'auth.sabrrust.online').strip()
 # Явный публичный base URL (если задан, приоритетнее host/proto из заголовков)
-STEAM_AUTH_PUBLIC_URL = os.environ.get('STEAM_AUTH_PUBLIC_URL', 'https://launch-serversteamauth.ru').strip().rstrip('/')
-# URL основного сервера для отправки информации об авторизации
+STEAM_AUTH_PUBLIC_URL = os.environ.get('STEAM_AUTH_PUBLIC_URL', f'https://{STEAM_AUTH_DOMAIN}').strip().rstrip('/')
+# URL сервера лаунчера (куда auth шлет callback после Steam)
 MAIN_SERVER_URL = os.environ.get('MAIN_SERVER_URL', 'http://51.38.150.34:10010')
+MAIN_SERVER_CALLBACK_URL = os.environ.get(
+    'MAIN_SERVER_CALLBACK_URL',
+    f"{MAIN_SERVER_URL.rstrip('/')}/api/steam-auth/callback",
+)
 
 # Steam Auth Session Storage (временное хранилище сессий)
 steam_auth_sessions = {}
@@ -117,7 +129,7 @@ class SteamAuthHandler(BaseHTTPRequestHandler):
 					'callback_url': callback_url
 				}
 				callback_json = json.dumps(callback_data).encode('utf-8')
-				main_server_endpoint = f"{MAIN_SERVER_URL.rstrip('/')}/api/steam-auth/callback"
+				main_server_endpoint = MAIN_SERVER_CALLBACK_URL
 				sent = False
 				for attempt in range(1, 4):
 					try:
@@ -370,4 +382,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-
