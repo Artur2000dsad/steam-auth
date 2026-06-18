@@ -6,7 +6,7 @@
     "cdn": "cdn"
   },
   "ports": {
-    "main": 8080,
+    "main": 5001,
     "steam_auth": 5000,
     "dev_proxy": 80
   },
@@ -19,7 +19,7 @@
   },
   "launcher_server_url": "http://51.38.150.34:10010",
   "steam_auth": {
-    "host": "127.0.0.1",
+    "host": "0.0.0.0",
     "callback_path": "/api/steam-auth/callback"
   }
 }
