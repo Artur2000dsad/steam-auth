@@ -15,7 +15,7 @@
     "discord": "https://discord.gg/sabr-rust",
     "telegram": "https://t.me/sabrrust",
     "shop": "https://sabrrust.gamestores.app/",
-    "launcher_download": ""
+    "launcher_download": "https://cdn.sabrrust.online/download?launcher_setup"
   },
   "launcher_server_url": "http://51.38.150.34:10010",
   "steam_auth": {
