@@ -1,0 +1,25 @@
+{
+  "domain": "sabrrust.online",
+  "project_name": "SABR RUST",
+  "subdomains": {
+    "auth": "auth",
+    "cdn": "cdn"
+  },
+  "ports": {
+    "main": 8080,
+    "steam_auth": 5000,
+    "dev_proxy": 80
+  },
+  "use_dev_proxy": false,
+  "urls": {
+    "discord": "https://discord.gg/sabr-rust",
+    "telegram": "https://t.me/sabrrust",
+    "shop": "https://sabrrust.gamestores.app/",
+    "launcher_download": ""
+  },
+  "launcher_server_url": "http://51.38.150.34:10010",
+  "steam_auth": {
+    "host": "127.0.0.1",
+    "callback_path": "/api/steam-auth/callback"
+  }
+}
