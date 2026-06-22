@@ -4,8 +4,8 @@
     {
       "id": 1,
       "name": "SABR RUST №1 | X2 | NOLIMIT | KIT | TP",
-      "connect": "31.77.197.146:20083",
-      "queryPort": 20084,
+      "connect": "217.60.245.104:10000",
+      "queryPort": 10001,
       "versionDisplay": "266 Devblog",
       "tags": "X2 · NOLIMIT · KIT · TP",
       "versionClass": "",
@@ -15,7 +15,19 @@
     },
     {
       "id": 2,
-      "name": "SABR RUST №2 | PVP | X100000 | KIT | TP | HOME",
+      "name": "SABR RUST №2 | COMBAT | PVP | AIMTRAINING",
+      "connect": "51.38.150.34:10034",
+      "queryPort": 10035,
+      "versionDisplay": "266 Devblog",
+      "tags": "COMBAT · AIMTRAINING · PVP",
+      "versionClass": "",
+      "serverTypeLabel": "",
+      "logoUrl": "/assets/server_avatar.png",
+      "sortOrder": 2
+    },
+    {
+      "id": 3,
+      "name": "SABR RUST №3 | PVP | X100000 | KIT | TP | HOME",
       "connect": "95.217.108.108:20510",
       "queryPort": 20511,
       "versionDisplay": "Оригинальная версия",
@@ -23,7 +35,7 @@
       "versionClass": "tag-green",
       "serverTypeLabel": "",
       "logoUrl": "/assets/server_avatar.png",
-      "sortOrder": 2
+      "sortOrder": 3
     }
   ],
   "partnerServers": []
